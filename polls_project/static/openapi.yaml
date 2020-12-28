@@ -1,0 +1,720 @@
+openapi: 3.0.0
+info:
+  title: Polls
+  description: Api для системы опросов пользователей
+  version: ""
+
+servers:
+  - url: http://127.0.0.1:8000/
+
+security:
+  - TokenAuthorization: []
+
+paths:
+  /api/polls/active/:
+    get:
+      operationId: activePolls
+      summary: Возвращает список активных опросов
+      description: Возвращает список активных опросов. Публичный метод
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Poll"
+      security: []
+      tags:
+        - Опросы
+    parameters: []
+  /api/polls/:
+    get:
+      operationId: pollList
+      summary: Возвращает список опросов администратора
+      description: >
+        Возвращает список опросов администратора.
+        Доступен пользователям группы admins.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Poll"
+      tags:
+        - Опросы
+    post:
+      operationId: createPoll
+      summary: Создает опрос
+      description: Метод для создания опроса. Доступен пользователям группы admins.
+      requestBody:
+        $ref: "#/components/requestBodies/Poll"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poll"
+      tags:
+        - Опросы
+    parameters: []
+  "/api/polls/{id}/":
+    get:
+      operationId: getPoll
+      summary: Возвращает детализированное представление опроса
+      description: >
+        Возвращает детализированное представление опроса со
+        списком вопросов и вариантов ответа. Доступен пользователям группы admins.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PollDetail"
+      tags:
+        - Опросы
+    put:
+      operationId: updatePoll
+      summary: Изменяет опрос
+      description: Метод для изменения опроса. Доступен пользователям группы admins.
+      requestBody:
+        $ref: "#/components/requestBodies/Poll"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poll"
+      tags:
+        - Опросы
+    delete:
+      operationId: deletePoll
+      summary: Удаляет опрос
+      description: Метод для удаления опроса. Доступен пользователям группы admins.
+      responses:
+        "204":
+          description: ""
+      tags:
+        - Опросы
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  "/api/polls/{id}/stop/":
+    post:
+      operationId: stopPoll
+      summary: Завершает опрос
+      description: Метод для завершения опроса. Доступен пользователям группы admins.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Poll"
+      tags:
+        - Опросы
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+  /api/question/:
+    post:
+      operationId: createQuestion
+      summary: Создает вопрос
+      description: >
+        Метод для создания вопроса. Если вопрос с выбором ответа,
+        то необходимо указать варианты ответа.
+        Доступен пользователям группы admins.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionCreate"
+        required: true
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionCreate"
+      tags:
+        - Вопросы
+    parameters: []
+  "/api/question/{id}/":
+    put:
+      operationId: updateQuestion
+      summary: Изменяет вопрос
+      description: >
+        Метод для изменения вопроса. Тип вопроса изменить нельзя
+        Доступен пользователям группы admins.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionUpdate"
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionUpdate"
+      tags:
+        - Вопросы
+    delete:
+      operationId: deleteQuestion
+      summary: Удаляет вопрос
+      description: Метод для удаления вопроса. Доступен пользователям группы admins.
+      responses:
+        "204":
+          description: ""
+      tags:
+        - Вопросы
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+  /api/choice/:
+    post:
+      operationId: createChoice
+      summary: Добавляет вариант ответа.
+      description: >
+        Добавляет вариант ответа к существующему вопросу.
+        Доступен пользователям группы admins.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChoiceCreate"
+        required: true
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChoiceCreate"
+      tags:
+        - Варианты ответов
+    parameters: []
+  "/api/choice/{id}/":
+    put:
+      operationId: updateChoice
+      summary: Изменяет вариант ответа.
+      description: Метод для изменения варианта ответа. Доступен пользователям группы admins.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Choice"
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Choice"
+      tags:
+        - Варианты ответов
+    delete:
+      operationId: deleteChoice
+      summary: Удаляет вариант ответа.
+      description: Метод для удаления варианта ответа. Доступен пользователям группы admins.
+      responses:
+        "204":
+          description: ""
+      tags:
+        - Варианты ответов
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+  "/api/polls/{id}/pass/":
+    post:
+      operationId: passPoll
+      summary: Сохраняет пройденный опрос
+      description: >
+        Метод для сохранения пройденного опроса. Публичный метод.
+        Можно вызвать анонимно или с токеном пользователя.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Answer"
+        required: true
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Answer"
+      tags:
+        - Пройденные опросы
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this poll.
+        required: true
+        schema:
+          type: integer
+  /api/polls/passed/:
+    get:
+      operationId: passedPollList
+      summary: Возвращает список пройденных пользователем опросов
+      description: >
+        Возвращает список пройденных пользователем опросов.
+        Доступен пользователям группы users.
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PassedPollList"
+      tags:
+        - Пройденные опросы
+    parameters: []
+  "/api/polls/passed/{id}/":
+    get:
+      operationId: getPassedPoll
+      summary: Возвращает детализированное представление пройденного опроса
+      description: >
+        Возвращает детализированное представление пройденного
+        пользователем опроса с ответами. Доступен пользователям группы users
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PassedPollDetail"
+      tags:
+        - Пройденные опросы
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+  /auth/user/:
+    post:
+      operationId: registration
+      summary: Регистрация пользователя
+      description: Регистрация пользователя
+      requestBody:
+        $ref: "#/components/requestBodies/User"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+      tags:
+        - Auth
+      security: []
+    parameters: []
+  /auth/login/:
+    post:
+      operationId: login
+      summary: Аутентификация пользователя
+      description: Аутентификация пользователя
+      requestBody:
+        $ref: "#/components/requestBodies/User"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          description: Bad request
+      tags:
+        - Auth
+      security: []
+    parameters: []
+  /auth/logout/:
+    post:
+      operationId: logout
+      summary: Выход из системы
+      description: Выход из системы
+      responses:
+        "201":
+          description: ""
+      tags:
+        - Auth
+    parameters: []
+
+
+components:
+  securitySchemes:
+    TokenAuthorization:
+      type: apiKey
+      in: header
+      name: Authorization
+
+  requestBodies:
+    Poll:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Poll"
+      required: true
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/User"
+      required: true
+
+  schemas:
+    ChoiceCreate:
+      required:
+        - text
+        - question
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        text:
+          title: Вариант ответа
+          type: string
+          maxLength: 512
+          minLength: 1
+        question:
+          title: Вопрос
+          type: integer
+    Choice:
+      required:
+        - text
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        text:
+          title: Вариант ответа
+          type: string
+          maxLength: 512
+          minLength: 1
+    Poll:
+      required:
+        - title
+        - description
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        title:
+          title: Название опроса
+          type: string
+          maxLength: 512
+          minLength: 1
+        description:
+          title: Описание опроса
+          type: string
+          minLength: 1
+        started_at:
+          title: Started at
+          type: string
+          format: date-time
+          readOnly: true
+        stopped_at:
+          title: Stopped at
+          type: string
+          format: date-time
+          readOnly: true
+    PassedPollList:
+      required:
+        - id
+        - title
+        - description
+        - passed_at
+      type: object
+      properties:
+        id:
+          title: Id
+          type: integer
+        title:
+          title: Title
+          type: string
+          minLength: 1
+        description:
+          title: Description
+          type: string
+          minLength: 1
+        passed_at:
+          title: Passed at
+          type: string
+          format: date-time
+    SelectedChoice:
+      required:
+        - text
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        selected:
+          title: Selected
+          type: boolean
+          readOnly: true
+        text:
+          title: Вариант ответа
+          type: string
+          maxLength: 512
+          minLength: 1
+    AnsweredQuestion:
+      required:
+        - text
+        - question_type
+        - choices
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        text:
+          title: Текст вопроса
+          type: string
+          minLength: 1
+        question_type:
+          title: "Тип вопроса: 0 - текстовый 1 - с одним вариантом ответа 2 - с
+            несколькими вариантами ответов"
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+        answer:
+          title: Answer
+          type: string
+          readOnly: true
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedChoice"
+    PassedPollDetail:
+      required:
+        - id
+        - title
+        - description
+        - passed_at
+        - questions
+      type: object
+      properties:
+        id:
+          title: Id
+          type: integer
+        title:
+          title: Title
+          type: string
+          minLength: 1
+        description:
+          title: Description
+          type: string
+          minLength: 1
+        passed_at:
+          title: Passed at
+          type: string
+          format: date-time
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnsweredQuestion"
+    QuestionList:
+      required:
+        - text
+        - question_type
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        text:
+          title: Текст вопроса
+          type: string
+          minLength: 1
+        question_type:
+          title: "Тип вопроса: 0 - текстовый 1 - с одним вариантом ответа 2 - с
+            несколькими вариантами ответов"
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Choice"
+          readOnly: true
+    PollDetail:
+      required:
+        - title
+        - description
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        title:
+          title: Название опроса
+          type: string
+          maxLength: 512
+          minLength: 1
+        description:
+          title: Описание опроса
+          type: string
+          minLength: 1
+        started_at:
+          title: Started at
+          type: string
+          format: date-time
+          readOnly: true
+        stopped_at:
+          title: Stopped at
+          type: string
+          format: date-time
+          readOnly: true
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionList"
+          readOnly: true
+    Answer:
+      required:
+        - question
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        question:
+          title: Вопрос
+          type: integer
+        text:
+          title: Текст ответа
+          type: string
+          maxLength: 512
+          nullable: true
+        choices:
+          type: array
+          items:
+            title: Варианты ответа
+            type: integer
+          uniqueItems: true
+    QuestionCreate:
+      required:
+        - poll
+        - text
+        - question_type
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        poll:
+          title: Опрос
+          type: integer
+        text:
+          title: Текст вопроса
+          type: string
+          minLength: 1
+        question_type:
+          title: "Тип вопроса: 0 - текстовый 1 - с одним вариантом ответа 2 - с
+            несколькими вариантами ответов"
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Choice"
+    QuestionUpdate:
+      required:
+        - text
+      type: object
+      properties:
+        id:
+          title: ID
+          type: integer
+          readOnly: true
+        text:
+          title: Текст вопроса
+          type: string
+          minLength: 1
+    User:
+      required:
+        - username
+        - password
+      type: object
+      properties:
+        username:
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры и
+            символы @/./+/-/_.
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+          minLength: 1
+        password:
+          title: Пароль
+          type: string
+          maxLength: 128
+          minLength: 1
+    Token:
+      type: object
+      properties:
+        token:
+          title: Token
+          type: string
+          readOnly: true
+          minLength: 1

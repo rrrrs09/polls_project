@@ -1,0 +1,9 @@
+# text editors configs
+.vscode
+
+# db files
+db.sqlite3
+
+# cache files
+__pycache__
+*.pyc
